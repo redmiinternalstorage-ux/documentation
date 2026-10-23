@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learning Curve LMS — Project Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --violet: #8b5cf6;
+      --pink: #ec4899;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --dark: #0f0f1a;
+      --darker: #080812;
+      --card: #1a1a2e;
+      --card2: #16213e;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Animated Background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 50% 50%, rgba(236,72,153,0.07) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Floating Orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.25;
+      animation: floatOrb 12s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb1 { width:400px; height:400px; background:var(--purple); top:-100px; left:-100px; animation-delay:0s; }
+    .orb2 { width:300px; height:300px; background:var(--cyan); bottom:-50px; right:-50px; animation-delay:4s; }
+    .orb3 { width:250px; height:250px; background:var(--pink); top:50%; left:70%; animation-delay:8s; }
+
+    @keyframes floatOrb {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,40px) scale(1.1); }
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(20px);
+      background: rgba(8,8,18,0.8);
+      border-bottom: 1px solid rgba(124,58,237,0.2);
+    }
+    .nav-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.85rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--violet); }
+    .powered-badge {
+      font-size: 0.72rem; color: var(--muted);
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      padding: 0.3rem 0.8rem; border-radius: 999px;
+    }
+    .powered-badge span { color: var(--violet); font-weight: 600; }
+
+    /* ── Sections ── */
+    section { position: relative; z-index: 1; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.4);
+      padding: 0.4rem 1rem; border-radius: 999px;
+      font-size: 0.8rem; color: var(--violet); margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .hero-badge .dot { width:8px; height:8px; border-radius:50%; background:var(--emerald); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+    h1.hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #a78bfa, #38bdf8, #f472b6);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
+
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted); max-width: 600px;
+      line-height: 1.7; margin-bottom: 3rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: 0.75rem;
+      justify-content: center; margin-bottom: 3rem;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .tag {
+      padding: 0.4rem 1rem; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 600;
+      border: 1px solid;
+    }
+    .tag-purple { background:rgba(124,58,237,0.15); border-color:rgba(124,58,237,0.4); color:#a78bfa; }
+    .tag-cyan   { background:rgba(6,182,212,0.12);  border-color:rgba(6,182,212,0.4);  color:#67e8f9; }
+    .tag-pink   { background:rgba(236,72,153,0.12); border-color:rgba(236,72,153,0.4); color:#f9a8d4; }
+    .tag-green  { background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.4); color:#6ee7b7; }
+    .tag-orange { background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.4); color:#fcd34d; }
+
+    .scroll-hint {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.78rem;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+    .scroll-line { width:1px; height:50px; background: linear-gradient(to bottom, var(--violet), transparent); }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      display: flex; flex-wrap: wrap; gap: 1px;
+      background: rgba(124,58,237,0.2);
+      border-top: 1px solid rgba(124,58,237,0.2);
+      border-bottom: 1px solid rgba(124,58,237,0.2);
+    }
+    .stat-item {
+      flex: 1; min-width: 150px;
+      padding: 2rem 1.5rem; text-align: center;
+      background: var(--darker);
+      transition: background 0.3s;
+    }
+    .stat-item:hover { background: rgba(124,58,237,0.08); }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Section wrapper ── */
+    .section-wrap { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--violet);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700; color: var(--text);
+    }
+    .section-desc { color: var(--muted); margin-top: 0.75rem; font-size: 0.95rem; }
+
+    /* ── Cards Grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1.2rem;
+      padding: 1.75rem;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      border-radius: 1.2rem 1.2rem 0 0;
+    }
+    .card-purple::before { background: linear-gradient(90deg, var(--purple), var(--violet)); }
+    .card-cyan::before   { background: linear-gradient(90deg, var(--cyan), #0ea5e9); }
+    .card-pink::before   { background: linear-gradient(90deg, var(--pink), #fb7185); }
+    .card-green::before  { background: linear-gradient(90deg, var(--emerald), #34d399); }
+    .card-orange::before { background: linear-gradient(90deg, var(--orange), #fb923c); }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(124,58,237,0.3);
+      box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+    }
+
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1rem;
+    }
+    .bg-purple { background: rgba(124,58,237,0.2); }
+    .bg-cyan   { background: rgba(6,182,212,0.2); }
+    .bg-pink   { background: rgba(236,72,153,0.2); }
+    .bg-green  { background: rgba(16,185,129,0.2); }
+    .bg-orange { background: rgba(245,158,11,0.2); }
+    .bg-red    { background: rgba(239,68,68,0.2); }
+
+    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; color: var(--text); }
+    .card-text  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── Chapter boxes ── */
+    .chapter-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .chapter-item {
+      display: flex; gap: 1.25rem; align-items: flex-start;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1rem; padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .chapter-item:hover { transform: translateX(6px); border-color: rgba(124,58,237,0.3); }
+    .chapter-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem; font-weight: 800; line-height:1;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      flex-shrink: 0; width: 2.5rem;
+    }
+    .chapter-body h3 { font-weight: 700; margin-bottom: 0.35rem; }
+    .chapter-body p  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Team ── */
+    .team-grid {
+      display: flex; flex-wrap: wrap; gap: 2rem;
+      justify-content: center;
+    }
+    .team-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1.5rem; padding: 2.5rem 2rem;
+      text-align: center; width: 220px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .team-card::after {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 50% 0%, rgba(124,58,237,0.15), transparent 70%);
+      pointer-events: none;
+    }
+    .team-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(124,58,237,0.2); }
+    .avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 1rem;
+      position: relative;
+    }
+    .avatar::before {
+      content:''; position:absolute; inset:-3px;
+      border-radius:50%;
+      background: linear-gradient(135deg, var(--purple), var(--cyan), var(--pink));
+      z-index:-1;
+    }
+    .avatar-inner { width:100%; height:100%; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
+    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+    .team-role { font-size: 0.78rem; color: var(--violet); font-weight: 500; }
+
+    /* ── Tech Stack ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1rem;
+    }
+    .tech-pill {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.5rem; padding: 1.2rem 0.5rem;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1rem; font-size: 0.8rem; font-weight: 600;
+      color: var(--muted); transition: all 0.2s; cursor: default;
+    }
+    .tech-pill:hover {
+      border-color: rgba(124,58,237,0.4);
+      color: var(--text);
+      background: rgba(124,58,237,0.1);
+      transform: translateY(-3px);
+    }
+    .tech-pill .ti { font-size: 1.6rem; }
+
+    /* ── DB Tables ── */
+    .db-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .db-pill {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 0.75rem; padding: 0.9rem 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.82rem; font-weight: 500; color: var(--muted);
+      transition: all 0.2s;
+    }
+    .db-pill:hover { border-color: rgba(6,182,212,0.4); color: #67e8f9; background: rgba(6,182,212,0.06); }
+    .db-dot { width:8px; height:8px; border-radius:50%; background:var(--cyan); flex-shrink:0; }
+
+    /* ── Roles ── */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .role-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1rem; padding: 1.5rem;
+      text-align: center; transition: all 0.2s;
+    }
+    .role-card:hover { border-color: rgba(236,72,153,0.35); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(236,72,153,0.1); }
+    .role-emoji { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .role-name { font-weight: 700; font-size: 0.9rem; }
+    .role-desc { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* ── Timeline ── */
+    .timeline { position:relative; padding-left: 2rem; }
+    .timeline::before {
+      content:''; position:absolute; left:8px; top:0; bottom:0; width:2px;
+      background: linear-gradient(to bottom, var(--purple), var(--cyan), transparent);
+    }
+    .tl-item { position:relative; margin-bottom: 2rem; }
+    .tl-dot {
+      position:absolute; left:-2rem; top:4px;
+      width:18px; height:18px; border-radius:50%;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border: 3px solid var(--darker);
+    }
+    .tl-title { font-weight: 700; margin-bottom: 0.3rem; }
+    .tl-text  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Future ── */
+    .future-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .future-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 1rem; padding: 1.5rem;
+      transition: all 0.2s;
+    }
+    .future-card:hover { border-color: rgba(245,158,11,0.35); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(245,158,11,0.1); }
+    .future-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .future-title { font-weight: 700; margin-bottom: 0.4rem; }
+    .future-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid rgba(124,58,237,0.2);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      position: relative; z-index: 1;
+    }
+    .footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #38bdf8, #f472b6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .footer-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .footer-powered {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2));
+      border: 1px solid rgba(124,58,237,0.3);
+      padding: 0.6rem 1.5rem; border-radius: 999px;
+      font-size: 0.85rem; margin-bottom: 2rem;
+    }
+    .footer-powered .heart { color: var(--pink); animation: pulse 1.5s infinite; }
+    .footer-names { color: var(--violet); font-weight: 700; }
+    .footer-copy { font-size: 0.75rem; color: rgba(148,163,184,0.5); }
+
+    /* ── Divider ── */
+    .divider { height:1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.3), transparent); margin: 0 2rem; }
+
+    /* ── Glow Separator ── */
+    .glow-sep {
+      text-align: center; padding: 1rem;
+      font-size: 1.5rem; letter-spacing: 0.5rem; opacity: 0.3;
+    }
+
+    /* ── Responsive ── */
+    @media(max-width:768px) {
+      .nav-links { display:none; }
+      .hero-title { font-size: 2rem; }
+      .team-card { width: 160px; padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <!-- ── Navbar ── -->
+  <nav>
+    <div class="nav-brand">📚 Learning Curve LMS</div>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#chapters">Chapters</a>
+      <a href="#features">Features</a>
+      <a href="#tech">Tech Stack</a>
+      <a href="#database">Database</a>
+      <a href="#team">Team</a>
+      <a href="#future">Future</a>
+    </div>
+    <div class="powered-badge">Powered by <span>Hani · Pratik · Arpit</span></div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="hero-badge"><span class="dot"></span> Academic Year 2025–2026 · LJ University</div>
+    <h1 class="hero-title">
+      <span class="gradient-text">Learning Curve LMS</span>
+    </h1>
+    <p class="hero-sub">
+      An advanced web-based <strong>E-Learning &amp; Operations Management System</strong> —
+      built for modern education with AI-powered support, real-time tracking, and seamless collaboration.
+    </p>
+    <div class="hero-tags">
+      <span class="tag tag-purple">Laravel 11.x</span>
+      <span class="tag tag-cyan">PHP 8.2+</span>
+      <span class="tag tag-pink">Tailwind CSS v3</span>
+      <span class="tag tag-green">MySQL 8.0</span>
+      <span class="tag tag-orange">AI Chatbot</span>
+      <span class="tag tag-purple">iMCA Final Year</span>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── Stats ── -->
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">User Roles</div></div>
+    <div class="stat-item"><div class="stat-num">19</div><div class="stat-label">DB Tables</div></div>
+    <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Chapters</div></div>
+    <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Developers</div></div>
+    <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Academic Year</div></div>
+  </div>
+
+  <!-- ── Overview ── -->
+  <section id="overview">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">🎯 Project Overview</div>
+        <h2 class="section-title">What is Learning Curve LMS?</h2>
+        <p class="section-desc">A full-stack, role-based education management platform built as an iMCA final-year project at LJ University.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card card-purple">
+          <div class="card-icon bg-purple">📖</div>
+          <div class="card-title">Course Management</div>
+          <div class="card-text">Instructors create and manage rich course content. Students enroll, track progress, and access learning materials all in one place.</div>
+        </div>
+        <div class="card card-cyan">
+          <div class="card-icon bg-cyan">🤖</div>
+          <div class="card-title">AI Chatbot Support</div>
+          <div class="card-text">An integrated AI assistant helps students with queries, provides instant support, and reduces instructor workload.</div>
+        </div>
+        <div class="card card-pink">
+          <div class="card-icon bg-pink">📜</div>
+          <div class="card-title">Certificate Generation</div>
+          <div class="card-text">Automated PDF certificate generation via DomPDF upon course completion — downloadable and verifiable.</div>
+        </div>
+        <div class="card card-green">
+          <div class="card-icon bg-green">📊</div>
+          <div class="card-title">Attendance Tracking</div>
+          <div class="card-text">Real-time attendance recording with analytics dashboards for instructors and administrators.</div>
+        </div>
+        <div class="card card-orange">
+          <div class="card-icon bg-orange">💰</div>
+          <div class="card-title">Finance Management</div>
+          <div class="card-text">Salary payments, fee tracking, and financial reporting — all managed by the Finance Manager role.</div>
+        </div>
+        <div class="card card-purple">
+          <div class="card-icon bg-red">📧</div>
+          <div class="card-title">SMTP Mail System</div>
+          <div class="card-text">Automated email notifications for enrollments, deadlines, results, and system events via SMTP integration.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Chapters ── -->
+  <section id="chapters">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">📚 Documentation</div>
+        <h2 class="section-title">Report Structure — 7 Chapters</h2>
+        <p class="section-desc">A comprehensive academic report covering every phase of the software development lifecycle.</p>
+      </div>
+      <div class="chapter-list">
+        <div class="chapter-item">
+          <div class="chapter-num">01</div>
+          <div class="chapter-body">
+            <h3>Introduction &amp; Objectives</h3>
+            <p>Project background, problem statement, motivation, and high-level system objectives. Defines scope, target users, and the academic context at LJ University.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">02</div>
+          <div class="chapter-body">
+            <h3>System Analysis</h3>
+            <p>Feasibility study, requirements gathering (functional &amp; non-functional), stakeholder analysis, and current system limitations that motivated this project.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">03</div>
+          <div class="chapter-body">
+            <h3>System Design</h3>
+            <p>Architecture diagrams, use case diagrams, class diagrams, interaction diagrams, and activity diagrams covering all 5 user roles and system flows.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">04</div>
+          <div class="chapter-body">
+            <h3>Data Dictionary</h3>
+            <p>Detailed schema for all 19 MySQL tables including users, courses, enrollments, tasks, submissions, attendance, certificates, mail_logs, salary_payments, and more.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">05</div>
+          <div class="chapter-body">
+            <h3>Implementation</h3>
+            <p>Agile sprint methodology, PSR-12 coding standards, Git version control workflow, module-wise implementation details, and key code snippets.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">06</div>
+          <div class="chapter-body">
+            <h3>Testing &amp; Validation</h3>
+            <p>Unit testing, integration testing, user acceptance testing (UAT), test cases, bug tracking, and performance benchmarking results.</p>
+          </div>
+        </div>
+        <div class="chapter-item">
+          <div class="chapter-num">07</div>
+          <div class="chapter-body">
+            <h3>Conclusion &amp; Future Scope</h3>
+            <p>Project summary, learning outcomes, limitations, and proposed enhancements including mobile app, AI grading, blockchain certificates, and Redis caching.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── User Roles ── -->
+  <section id="features">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">👥 User Roles</div>
+        <h2 class="section-title">5 Role-Based Access Levels</h2>
+        <p class="section-desc">Every user gets a tailored dashboard and permissions aligned with their role in the system.</p>
+      </div>
+      <div class="roles-grid">
+        <div class="role-card">
+          <span class="role-emoji">🎓</span>
+          <div class="role-name">Student</div>
+          <div class="role-desc">Enroll in courses, submit tasks, track progress, download certificates</div>
+        </div>
+        <div class="role-card">
+          <span class="role-emoji">👨‍🏫</span>
+          <div class="role-name">Instructor</div>
+          <div class="role-desc">Create courses, manage content, grade submissions, view attendance</div>
+        </div>
+        <div class="role-card">
+          <span class="role-emoji">🛠️</span>
+          <div class="role-name">Support Staff</div>
+          <div class="role-desc">Handle student queries, manage support tickets, assist operations</div>
+        </div>
+        <div class="role-card">
+          <span class="role-emoji">💼</span>
+          <div class="role-name">Finance Manager</div>
+          <div class="role-desc">Manage salary payments, fee records, financial reports, audit logs</div>
+        </div>
+        <div class="role-card">
+          <span class="role-emoji">⚙️</span>
+          <div class="role-name">Administrator</div>
+          <div class="role-desc">Full system control — users, roles, settings, analytics, mail system</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Tech Stack ── -->
+  <section id="tech">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">⚡ Technology</div>
+        <h2 class="section-title">Tech Stack</h2>
+        <p class="section-desc">Built on modern, production-grade technologies following industry best practices.</p>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-pill"><span class="ti">🐘</span>PHP 8.2+</div>
+        <div class="tech-pill"><span class="ti">🎯</span>Laravel 11.x</div>
+        <div class="tech-pill"><span class="ti">🎨</span>Tailwind CSS v3</div>
+        <div class="tech-pill"><span class="ti">🗄️</span>MySQL 8.0</div>
+        <div class="tech-pill"><span class="ti">📄</span>DomPDF</div>
+        <div class="tech-pill"><span class="ti">📧</span>SMTP Mail</div>
+        <div class="tech-pill"><span class="ti">🤖</span>AI Chatbot</div>
+        <div class="tech-pill"><span class="ti">🔀</span>Git VCS</div>
+        <div class="tech-pill"><span class="ti">📦</span>Composer</div>
+        <div class="tech-pill"><span class="ti">🔐</span>Laravel Auth</div>
+        <div class="tech-pill"><span class="ti">📋</span>PSR-12</div>
+        <div class="tech-pill"><span class="ti">🏃</span>Agile Sprints</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Database ── -->
+  <section id="database">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">🗃️ Database</div>
+        <h2 class="section-title">19 MySQL Tables</h2>
+        <p class="section-desc">A normalized relational schema designed for performance, integrity, and scalability.</p>
+      </div>
+      <div class="db-grid">
+        <div class="db-pill"><span class="db-dot"></span>users</div>
+        <div class="db-pill"><span class="db-dot"></span>courses</div>
+        <div class="db-pill"><span class="db-dot"></span>enrollments</div>
+        <div class="db-pill"><span class="db-dot"></span>tasks</div>
+        <div class="db-pill"><span class="db-dot"></span>submissions</div>
+        <div class="db-pill"><span class="db-dot"></span>certificates</div>
+        <div class="db-pill"><span class="db-dot"></span>attendance</div>
+        <div class="db-pill"><span class="db-dot"></span>mail_logs</div>
+        <div class="db-pill"><span class="db-dot"></span>salary_payments</div>
+        <div class="db-pill"><span class="db-dot"></span>roles</div>
+        <div class="db-pill"><span class="db-dot"></span>permissions</div>
+        <div class="db-pill"><span class="db-dot"></span>role_user</div>
+        <div class="db-pill"><span class="db-dot"></span>course_materials</div>
+        <div class="db-pill"><span class="db-dot"></span>announcements</div>
+        <div class="db-pill"><span class="db-dot"></span>support_tickets</div>
+        <div class="db-pill"><span class="db-dot"></span>fee_records</div>
+        <div class="db-pill"><span class="db-dot"></span>notifications</div>
+        <div class="db-pill"><span class="db-dot"></span>activity_logs</div>
+        <div class="db-pill"><span class="db-dot"></span>settings</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Development Process ── -->
+  <section id="process">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">🔄 Development Process</div>
+        <h2 class="section-title">Agile Sprint Methodology</h2>
+        <p class="section-desc">Iterative development with clear milestones, version control, and PSR-12 compliance throughout.</p>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 1 — Project Setup &amp; Auth</div>
+          <div class="tl-text">Laravel project scaffolding, database design, authentication system, role-based middleware, and base UI with Tailwind CSS.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 2 — Core Modules</div>
+          <div class="tl-text">Course creation, enrollment flow, instructor dashboard, student portal, and material upload functionality.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 3 — Tasks, Submissions &amp; Grading</div>
+          <div class="tl-text">Assignment creation, student submission workflow, instructor grading interface, and automated feedback system.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 4 — Advanced Features</div>
+          <div class="tl-text">AI Chatbot integration, PDF certificate generation via DomPDF, SMTP mail notifications, and attendance tracking.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 5 — Finance &amp; Admin</div>
+          <div class="tl-text">Finance Manager module, salary payment tracking, fee management, administrator analytics, and system settings.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">Sprint 6 — Testing &amp; Refinement</div>
+          <div class="tl-text">Comprehensive UAT, bug fixes, performance tuning, security hardening, and final documentation preparation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Future Scope ── -->
+  <section id="future">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">🚀 Future Scope</div>
+        <h2 class="section-title">Proposed Enhancements</h2>
+        <p class="section-desc">The roadmap beyond the current version — taking Learning Curve LMS to the next level.</p>
+      </div>
+      <div class="future-grid">
+        <div class="future-card">
+          <div class="future-icon">📱</div>
+          <div class="future-title">Mobile Application</div>
+          <div class="future-desc">Native iOS &amp; Android apps for students and instructors with offline content access and push notifications.</div>
+        </div>
+        <div class="future-card">
+          <div class="future-icon">🧠</div>
+          <div class="future-title">AI-Powered Grading</div>
+          <div class="future-desc">Automated assignment evaluation using NLP models — reducing instructor workload and providing instant feedback.</div>
+        </div>
+        <div class="future-card">
+          <div class="future-icon">⛓️</div>
+          <div class="future-title">Blockchain Certificates</div>
+          <div class="future-desc">Tamper-proof, verifiable digital certificates issued on a blockchain — trusted by employers worldwide.</div>
+        </div>
+        <div class="future-card">
+          <div class="future-icon">⚡</div>
+          <div class="future-title">Redis Caching</div>
+          <div class="future-desc">High-performance caching layer with Redis to drastically reduce database load and improve response times.</div>
+        </div>
+        <div class="future-card">
+          <div class="future-icon">🎮</div>
+          <div class="future-title">Gamification</div>
+          <div class="future-desc">Badges, leaderboards, XP points, and streak tracking to boost student engagement and learning motivation.</div>
+        </div>
+        <div class="future-card">
+          <div class="future-icon">📹</div>
+          <div class="future-title">Live Classes</div>
+          <div class="future-desc">Real-time video conferencing integration for live lectures, virtual labs, and interactive sessions.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Team ── -->
+  <section id="team">
+    <div class="section-wrap">
+      <div class="section-header">
+        <div class="section-label">👨‍💻 The Team</div>
+        <h2 class="section-title">Built by iMCA Students</h2>
+        <p class="section-desc">Three passionate developers from LJ University who turned an idea into a full production-ready LMS.</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="avatar"><div class="avatar-inner">🌟</div></div>
+          <div class="team-name">Hani Boghara</div>
+          <div class="team-role">Full Stack Developer</div>
+        </div>
+        <div class="team-card">
+          <div class="avatar"><div class="avatar-inner">⚡</div></div>
+          <div class="team-name">Pratik Savaliya</div>
+          <div class="team-role">Full Stack Developer</div>
+        </div>
+        <div class="team-card">
+          <div class="avatar"><div class="avatar-inner">🚀</div></div>
+          <div class="team-name">Arpit Kalathiya</div>
+          <div class="team-role">Full Stack Developer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-logo">Learning Curve LMS</div>
+    <div class="footer-sub">E-Learning &amp; Operations Management System · LJ University · iMCA 2025–2026</div>
+    <div>
+      <span class="footer-powered">
+        Made with <span class="heart">♥</span> by
+        <span class="footer-names">Hani &nbsp;·&nbsp; Pratik &nbsp;·&nbsp; Arpit</span>
+      </span>
+    </div>
+    <br/>
+    <div class="footer-copy">Powered by Hani Boghara · Pratik Savaliya · Arpit Kalathiya &nbsp;|&nbsp; LJ University · 2026</div>
+  </footer>
+
+</body>
+</html>
